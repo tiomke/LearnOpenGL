@@ -4,6 +4,7 @@
 
 using namespace std;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow * window);
 
 int main()
 {
@@ -41,6 +42,13 @@ int main()
 	// 添加主循环
 	while (!glfwWindowShouldClose(window))
 	{
+		// esc 退出
+		processInput(window);
+
+		// 渲染相关
+		glClearColor(0.2f,0.3f,0.3f,1.0f); // 设置用于清除的颜色值
+		glClear(GL_COLOR_BUFFER_BIT); // 清除颜色缓存
+
 		glfwSwapBuffers(window); // 交换缓冲
 		glfwPollEvents(); // 拉取事件
 	}
@@ -54,4 +62,10 @@ int main()
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) 
 {
 	glViewport(0,0,width,height);
+}
+
+void processInput(GLFWwindow * window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
