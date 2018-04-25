@@ -1,5 +1,6 @@
 #include <glad/glad.h> // <glad/glad.h> 要在 <GLFW/glfw3.h> 之前，有 GL/gl.h 等依赖关系。glad 库协助我们使用正确的驱动，管理 OpenGL 的函数指针。
 #include <GLFW/glfw3.h> // glfw 库是协助我们来创建窗口的
+#include <Shader/Shader.h>
 #include <iostream>
 
 using namespace std;
@@ -39,72 +40,9 @@ int main()
 								// 注册窗口 resize 的回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 对于视网膜屏，width 和 height 都会比原输入值高，这大概就是会模糊的原因？
 
-																	   ////// 渲染配置 Start
-
-																	   // 1.编译链接 Shader
-	char * vertexShaderSource = "#version 330 core // 用的是 3.3 版本的核心模式\n\
-			layout(location = 0) in vec3 aPos; // in 表明输入的顶点的属性 （Input Vertex Attribute），aPos 是定义的变量\n\
-			layout(location = 1) in vec3 aColor;\n\
-			out vec4 ourColor;\n\
-			void main()\n\
-			{\n\
-			// 设置顶点着色器的输出\n\
-			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n\
-			// 注：实际工程中的程序，输入数据往往不是标准设备坐标，需要先转换为标准设备坐标\n\
-			ourColor = vec4(aColor,1.0);\n\
-			}";
-	GLuint vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER); // 创建一个顶点着色器
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);// 指定shader的源码 1 表示传递的源码数量为 1
-	glCompileShader(vertexShader); // 编译shader
-
-								   // 检查是否有编译错误
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success); // 获取编译状态
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		cout << "Error,Vertex Shader Compile Err!\n" << infoLog << endl;
-	}
-
-	// 片段着色器
-	char * fragmentShaderSource = "#version 330 core\n"
-		"in vec4 ourColor;\n"
-		"out vec4 fragColor;\n"
-		"void main()"
-		"{"
-		"fragColor=ourColor;"
-		"}";
-	GLuint fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, sizeof(infoLog), NULL, infoLog);
-		cout << "Err,Fragment Shader Compile Err!\n" << infoLog << endl;
-	}
-
-	// 把着色器附加到着色器程序对象上，并链接起来
-	GLuint program;
-	program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(program, sizeof(infoLog), NULL, infoLog);
-		cout << "Err,Shader Program Link Err!\n" << infoLog << endl;
-	}
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	////// 渲染配置 Start
+	Shader* shader = new Shader("../First/Shader/vshader.glsl", "../First/Shader/fshader.glsl");
+	//Shader* shader = new Shader("", "");
 
 
 	float vertices[] = { // 定义一个 2D 三角形，需要采用标准化设备坐标
@@ -178,7 +116,7 @@ int main()
 
 
 									  // 激活着色器程序对象
-		glUseProgram(program);
+		shader->use();
 		glBindVertexArray(VAO);
 		//float t = glfwGetTime();
 		//GLint pos = glGetUniformLocation(program, "ourColor");

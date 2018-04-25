@@ -32,5 +32,8 @@
     <ClInclude Include="..\..\Lib\GLAD\include\glad\glad.h">
       <Filter>头文件\glad</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Lib\Shader\Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
