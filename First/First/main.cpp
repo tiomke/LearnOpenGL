@@ -68,9 +68,10 @@ int main()
 	// 片段着色器
 	char * fragmentShaderSource = "#version 330 core\n"
 		"out vec4 fragColor;\n"
+		"uniform vec4 ourColor;\n"
 		"void main()"
 		"{"
-		"fragColor=vec4(1.0f,0.5f,0.2f,1.0f);"
+		"fragColor=ourColor;"
 		"}";
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -172,6 +173,9 @@ int main()
 									  // 激活着色器程序对象
 		glUseProgram(program);
 		glBindVertexArray(VAO);
+		float t = glfwGetTime();
+		GLint pos = glGetUniformLocation(program, "ourColor");
+		glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
 		//glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
