@@ -44,11 +44,14 @@ int main()
 																	   // 1.编译链接 Shader
 	char * vertexShaderSource = "#version 330 core // 用的是 3.3 版本的核心模式\n\
 			layout(location = 0) in vec3 aPos; // in 表明输入的顶点的属性 （Input Vertex Attribute），aPos 是定义的变量\n\
+			layout(location = 1) in vec3 aColor;\n\
+			out vec4 ourColor;\n\
 			void main()\n\
 			{\n\
 			// 设置顶点着色器的输出\n\
 			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n\
 			// 注：实际工程中的程序，输入数据往往不是标准设备坐标，需要先转换为标准设备坐标\n\
+			ourColor = vec4(aColor,1.0);\n\
 			}";
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER); // 创建一个顶点着色器
@@ -67,8 +70,8 @@ int main()
 
 	// 片段着色器
 	char * fragmentShaderSource = "#version 330 core\n"
+		"in vec4 ourColor;\n"
 		"out vec4 fragColor;\n"
-		"uniform vec4 ourColor;\n"
 		"void main()"
 		"{"
 		"fragColor=ourColor;"
@@ -105,10 +108,11 @@ int main()
 
 
 	float vertices[] = { // 定义一个 2D 三角形，需要采用标准化设备坐标
-		-0.5,-0.5,0,
-		0.5,-0.5,0,
-		0,0.5,0,
-		0.5,0.5,0,
+		// 顶点			// 颜色
+		-0.5,-0.5,0,	1,0,0,
+		0.5,-0.5,0,		0,1,0,
+		0,0.5,0,		0,0,1,
+		0.5,0.5,0,		1,1,1,
 	};
 	GLuint indices[] = { // 索引，指明顶点的绘制顺序
 		0,1,2,
@@ -138,7 +142,7 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// 4.设定顶点属性
 	// 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)0);
 	// 注：
 	// index 可以配置多个顶点属性，我们这里配置到 0 位置。前面顶点着色器的 layout(location = 0) 就表示采用下标为0的顶点属性的定义
 	// size 顶点属性的大小，我们的顶点属性是 vec3 ,所以是 3
@@ -149,6 +153,9 @@ int main()
 
 	// 启用 0 号顶点属性
 	glEnableVertexAttribArray(0);
+	//设置用于颜色参数的顶点属性
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 
 	// 设置好了就解除绑定
@@ -173,9 +180,9 @@ int main()
 									  // 激活着色器程序对象
 		glUseProgram(program);
 		glBindVertexArray(VAO);
-		float t = glfwGetTime();
-		GLint pos = glGetUniformLocation(program, "ourColor");
-		glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
+		//float t = glfwGetTime();
+		//GLint pos = glGetUniformLocation(program, "ourColor");
+		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
 		//glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
