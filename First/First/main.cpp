@@ -107,7 +107,13 @@ int main()
 		-0.5,-0.5,0,
 		0.5,-0.5,0,
 		0,0.5,0,
+		0.5,0.5,0,
 	};
+	GLuint indices[] = { // 索引，指明顶点的绘制顺序
+		0,1,2,
+		1,2,3,
+	};
+
 
 	// 1.绑定 VAO
 	GLuint VAO;
@@ -125,8 +131,12 @@ int main()
 																			   // 现代 OpenGL 不提供默认的 顶点和片段着色器，所以需要自己撸一个
 
 
-																			   // 4.设定顶点属性
-																			   // 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// 4.设定顶点属性
+	// 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
 	// 注：
 	// index 可以配置多个顶点属性，我们这里配置到 0 位置。前面顶点着色器的 layout(location = 0) 就表示采用下标为0的顶点属性的定义
@@ -138,7 +148,10 @@ int main()
 
 	// 启用 0 号顶点属性
 	glEnableVertexAttribArray(0);
+
+
 	// 设置好了就解除绑定
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // VAO 还在用的时候 不能解绑 EBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -160,11 +173,12 @@ int main()
 		glUseProgram(program);
 		glBindVertexArray(VAO);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
+		//glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
 
 
 
-										  // 渲染相关 End
+		// 渲染相关 End
 
 		glfwSwapBuffers(window); // 交换缓冲
 		glfwPollEvents(); // 拉取事件
