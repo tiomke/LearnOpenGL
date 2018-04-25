@@ -54,7 +54,9 @@ int main()
 			0.5,-0.5,0,
 			0,0.5,0,
 		};
-		
+		GLuint VAO;
+		glGenVertexArrays(1, &VAO); // 创建一个 VAO
+		glBindVertexArray(VAO); // 绑定 VAO，之后的 VBO 和
 		GLuint VBO;
 		glGenBuffers(1,&VBO); // Vertice Buffer Object,顶点缓冲对象，在 GPU 中创建一片内存用于存储缓冲顶点
 		glBindBuffer(GL_ARRAY_BUFFER, VBO); // 把 VBO 绑定为 顶点数组缓冲 类型
@@ -64,14 +66,13 @@ int main()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //把数据复制到缓冲，最后一个参数指定 GPU 对数据的管理策略。执行完这一步，说明数据已经传到显存里面去了
 
 		// 现代 OpenGL 不提供默认的 顶点和片段着色器，所以需要自己撸一个
-		char * vertexShaderSource = "\
-			#version 330 core // 用的是 3.3 版本的核心模式\
-			layout(location = 0) in vec3 aPos; // in 表明输入的顶点的属性 （Input Vertex Attribute），aPos 是定义的变量\
-			void main()\
-			{\
-				// 设置顶点着色器的输出\
-				gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\
-				// 注：实际工程中的程序，输入数据往往不是标准设备坐标，需要先转换为标准设备坐标\
+		char * vertexShaderSource = "#version 330 core // 用的是 3.3 版本的核心模式\n\
+			layout(location = 0) in vec3 aPos; // in 表明输入的顶点的属性 （Input Vertex Attribute），aPos 是定义的变量\n\
+			void main()\n\
+			{\n\
+			// 设置顶点着色器的输出\n\
+			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n\
+			// 注：实际工程中的程序，输入数据往往不是标准设备坐标，需要先转换为标准设备坐标\n\
 			}";
 		GLuint vertexShader;
 		vertexShader = glCreateShader(GL_VERTEX_SHADER); // 创建一个顶点着色器
