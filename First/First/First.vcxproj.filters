@@ -35,5 +35,8 @@
     <ClInclude Include="..\..\Lib\Shader\Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Lib\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

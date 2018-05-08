@@ -3,6 +3,9 @@
 #include <Shader/Shader.h>
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 using namespace std;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
@@ -46,11 +49,11 @@ int main()
 
 
 	float vertices[] = { // 定义一个 2D 三角形，需要采用标准化设备坐标
-		// 顶点			// 颜色
-		-0.5,-0.5,0,	1,0,0,
-		0.5,-0.5,0,		0,1,0,
-		0,0.5,0,		0,0,1,
-		0.5,0.5,0,		1,1,1,
+		// 顶点			// 颜色		// 纹理
+		-0.5,-0.5,0,	1,0,0,		0,0,	// 左下
+		0.5,-0.5,0,		0,1,0,		1,0,	// 右下
+		0,0.5,0,		0,0,1,		0,1,	// 左上
+		0.5,0.5,0,		1,1,1,		1,1,	// 右上
 	};
 	GLuint indices[] = { // 索引，指明顶点的绘制顺序
 		0,1,2,
@@ -80,7 +83,7 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// 4.设定顶点属性
 	// 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
 	// 注：
 	// index 可以配置多个顶点属性，我们这里配置到 0 位置。前面顶点着色器的 layout(location = 0) 就表示采用下标为0的顶点属性的定义
 	// size 顶点属性的大小，我们的顶点属性是 vec3 ,所以是 3
@@ -92,14 +95,48 @@ int main()
 	// 启用 0 号顶点属性
 	glEnableVertexAttribArray(0);
 	//设置用于颜色参数的顶点属性
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
+	//设置用于纹理参数的顶点属性
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
 
 
 	// 设置好了就解除绑定
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // VAO 还在用的时候 不能解绑 EBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	// 创建纹理
+	int width, height, nChannel;
+	unsigned char *data = stbi_load("../First/wall.jpg", &width, &height, &nChannel, 0); // 加载源图
+	if (!data)
+	{
+		cout << "texture data load fail" << endl;
+		return -1;
+	}
+
+	GLuint texture; // 声明一个纹理对象
+	glGenTextures(1, &texture); // 参数一表示需要生成的纹理数量
+	glBindTexture(GL_TEXTURE_2D,texture);
+	// 设置纹理的环绕、过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);//纹理在横向的环绕模式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);// mipmap 的时候才用到
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);// mipmap 的时候才用到
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);//往纹理对象绑上纹理
+	//注：
+	//参数一 表示通过 GL_TEXTURE_2D 作用在生成的 texuture 上
+	//参数二 表示生成mipmap的level，0表示基础的
+	//参数三、四、五 生成的纹理的存储格式、宽度、高度
+	//参数六 设置为0，遗留参数
+	//参数七 源图的存储格式
+	//参数八 源图的数据类型
+	//参数九 源图的数据
+
+	//glGenerateMipmap(GL_TEXTURE_2D);//生成mipmap，也可以重复上面的语句，改变 mipmap的 level
+	stbi_image_free(data); // 释放图像内存
+
 
 	////// 渲染配置 End
 
@@ -118,6 +155,7 @@ int main()
 									  // 激活着色器程序对象
 		shader->use();
 		glBindVertexArray(VAO);
+		glBindTexture(GL_TEXTURE_2D,texture);//绑定纹理
 		//float t = glfwGetTime();
 		//GLint pos = glGetUniformLocation(program, "ourColor");
 		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
@@ -135,6 +173,7 @@ int main()
 
 	// 不用了就删除掉
 	glDeleteVertexArrays(1, &VAO);
+	glDeleteTextures(1, &texture);
 	glDeleteBuffers(1, &VBO);
 	glfwTerminate();//正确释放所有资源
 	return 0;
