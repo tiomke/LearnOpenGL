@@ -49,11 +49,11 @@ int main()
 
 
 	float vertices[] = { // 定义一个 2D 三角形，需要采用标准化设备坐标
-		// 顶点			// 颜色		// 纹理
-		-0.5,-0.5,0,	1,0,0,		0,0,	// 左下
-		0.5,-0.5,0,		0,1,0,		1,0,	// 右下
-		0,0.5,0,		0,0,1,		0,1,	// 左上
-		0.5,0.5,0,		1,1,1,		1,1,	// 右上
+						 // 顶点			// 颜色		// 纹理
+		-0.5f,-0.5f,0.0f,	1.0f,0.0f,0.0f,		0.0f,0.0f,	// 左下
+		0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,		1.0f,0.0f,	// 右下
+		0.0f,0.5f,0.0f,		0.0f,0.0f,1.0f,		0.0f,1.0f,	// 左上
+		0.5f,0.5f,0.0f,		1.0f,1.0f,1.0f,		1.0f,1.0f,	// 右上
 	};
 	GLuint indices[] = { // 索引，指明顶点的绘制顺序
 		0,1,2,
@@ -108,9 +108,12 @@ int main()
 	glBindVertexArray(0);
 
 	// 创建纹理
+	stbi_set_flip_vertically_on_load(true);//图片y坐标往往原点在上面，需要在加载图像前做一下翻转
 	int width, height, nChannel;
 	unsigned char *data = stbi_load("../First/wall.jpg", &width, &height, &nChannel, 0); // 加载源图
-	if (!data)
+	int width2, height2, nChannel2;
+	unsigned char *data2 = stbi_load("../First/test.png", &width2, &height2, &nChannel2, 0); // 加载源图
+	if (!data || !data2)
 	{
 		cout << "texture data load fail" << endl;
 		return -1;
@@ -134,9 +137,27 @@ int main()
 	//参数八 源图的数据类型
 	//参数九 源图的数据
 
+	GLuint texture2; // 声明第二个纹理对象
+	glGenTextures(1, &texture2); // 
+	glBindTexture(GL_TEXTURE_2D, texture2);//绑定到第二个纹理
+	// 设置纹理的环绕、过滤方式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);//纹理在横向的环绕模式
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);// mipmap 的时候才用到
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);// mipmap 的时候才用到
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data2);//从rgba-rgb
+
+
+
 	//glGenerateMipmap(GL_TEXTURE_2D);//生成mipmap，也可以重复上面的语句，改变 mipmap的 level
 	stbi_image_free(data); // 释放图像内存
+	stbi_image_free(data2);
 
+	shader->use(); // 先执行shader
+	// 再设置到uniform
+	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture1"), 0);
+	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture2"), 1); 
+	//shader->setInt("ourTexture2", 1);// 也可以直接辅助函数调用
 
 	////// 渲染配置 End
 
@@ -151,11 +172,14 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT); // 清除颜色缓存
 
 
-
-									  // 激活着色器程序对象
+		// 绑定纹理
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		// 激活着色器程序对象
 		shader->use();
 		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_2D,texture);//绑定纹理
 		//float t = glfwGetTime();
 		//GLint pos = glGetUniformLocation(program, "ourColor");
 		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
