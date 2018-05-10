@@ -112,7 +112,7 @@ int main()
 	int width, height, nChannel;
 	unsigned char *data = stbi_load("../First/wall.jpg", &width, &height, &nChannel, 0); // 加载源图
 	int width2, height2, nChannel2;
-	unsigned char *data2 = stbi_load("../First/test.png", &width2, &height2, &nChannel2, 0); // 加载源图
+	unsigned char *data2 = stbi_load("../First/awesomeface.png", &width2, &height2, &nChannel2, 0); // 加载源图
 	if (!data || !data2)
 	{
 		cout << "texture data load fail" << endl;
@@ -143,8 +143,8 @@ int main()
 	// 设置纹理的环绕、过滤方式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);//纹理在横向的环绕模式
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);// mipmap 的时候才用到
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);// mipmap 的时候才用到
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);// mipmap 的时候才用到
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);// mipmap 的时候才用到
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data2);//从rgba-rgb
 
 
