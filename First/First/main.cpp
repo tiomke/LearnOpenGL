@@ -2,16 +2,32 @@
 #include <GLFW/glfw3.h> // glfw 库是协助我们来创建窗口的
 #include <Shader/Shader.h>
 #include <iostream>
+// 数学库
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 using namespace std;
+using namespace glm;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
 
 int main()
 {
+	// 数学练习
+	vec4 vec(1.0f,0.0f,0.0f,1.0f);
+	mat4 trans; // 默认为 4×4 单位矩阵
+	trans = translate(trans,vec3(1.0f,1.0f,0.0f)); // 生成位移变换矩阵
+	//1 0 0 T(1)
+	//0 1 0 T(1)
+	//0 0 1 T(0)
+	//0 0 0 1
+	vec = trans * vec;
+	cout << vec.x << vec.y << vec.z << endl;
+
 	glfwInit(); // 初始化 glfw
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // glfwWindowHint 用于配置
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // 这两行表示使用的是 3.3 版本的 OpenGL
@@ -112,7 +128,7 @@ int main()
 	int width, height, nChannel;
 	unsigned char *data = stbi_load("../First/wall.jpg", &width, &height, &nChannel, 0); // 加载源图
 	int width2, height2, nChannel2;
-	unsigned char *data2 = stbi_load("../First/awesomeface.png", &width2, &height2, &nChannel2, 0); // 加载源图
+	unsigned char *data2 = stbi_load("../First/test.png", &width2, &height2, &nChannel2, 0); // 加载源图
 	if (!data || !data2)
 	{
 		cout << "texture data load fail" << endl;
