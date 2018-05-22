@@ -17,16 +17,6 @@ void processInput(GLFWwindow * window);
 
 int main()
 {
-	// 数学练习
-	vec4 vec(1.0f,0.0f,0.0f,1.0f);
-	mat4 trans; // 默认为 4×4 单位矩阵
-	trans = translate(trans,vec3(1.0f,1.0f,0.0f)); // 生成位移变换矩阵
-	//1 0 0 T(1)
-	//0 1 0 T(1)
-	//0 0 1 T(0)
-	//0 0 0 1
-	vec = trans * vec;
-	cout << vec.x << vec.y << vec.z << endl;
 
 	glfwInit(); // 初始化 glfw
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // glfwWindowHint 用于配置
@@ -174,6 +164,12 @@ int main()
 	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture1"), 0);
 	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture2"), 1); 
 	//shader->setInt("ourTexture2", 1);// 也可以直接辅助函数调用
+
+	// 把箱子先缩小0.5，再绕z轴旋转90度
+	mat4 trans;
+	trans = rotate(trans, radians(90.0f), vec3(0.0f, 0.0f, 1.0f)); // radians 可以把角度转换成弧度
+	trans = scale(trans, vec3(0.5f, 0.5f, 0.5f));
+	glUniformMatrix4fv(glGetUniformLocation(shader->ID,"transform"),1,GL_FALSE,value_ptr(trans)); // 参数二表示传入的矩阵个数，参数三表示是否要做矩阵置换
 
 	////// 渲染配置 End
 
