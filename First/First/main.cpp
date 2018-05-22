@@ -165,12 +165,6 @@ int main()
 	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture2"), 1); 
 	//shader->setInt("ourTexture2", 1);// 也可以直接辅助函数调用
 
-	// 把箱子先缩小0.5，再绕z轴旋转90度
-	mat4 trans;
-	trans = rotate(trans, radians(90.0f), vec3(0.0f, 0.0f, 1.0f)); // radians 可以把角度转换成弧度
-	trans = scale(trans, vec3(0.5f, 0.5f, 0.5f));
-	glUniformMatrix4fv(glGetUniformLocation(shader->ID,"transform"),1,GL_FALSE,value_ptr(trans)); // 参数二表示传入的矩阵个数，参数三表示是否要做矩阵置换
-
 	////// 渲染配置 End
 
 	// 添加主循环
@@ -195,6 +189,13 @@ int main()
 		//float t = glfwGetTime();
 		//GLint pos = glGetUniformLocation(program, "ourColor");
 		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
+
+		// 随时间旋转，
+		mat4 trans;
+		trans = translate(trans, vec3(0.5f, -0.5f, 0.0f)); // 
+		trans = rotate(trans, (float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f)); 
+		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "transform"), 1, GL_FALSE, value_ptr(trans)); // 参数二表示传入的矩阵个数，参数三表示是否要做矩阵置换
+
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
 		//glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
