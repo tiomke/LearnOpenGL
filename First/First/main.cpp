@@ -54,12 +54,49 @@ int main()
 	//Shader* shader = new Shader("", "");
 
 
-	float vertices[] = { // 定义一个 2D 三角形，需要采用标准化设备坐标
-						 // 顶点			// 颜色		// 纹理
-		-0.5f,-0.5f,0.0f,	1.0f,0.0f,0.0f,		0.0f,0.0f,	// 左下
-		0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,		1.0f,0.0f,	// 右下
-		-0.5f,0.5f,0.0f,		0.0f,0.0f,1.0f,		0.0f,1.0f,	// 左上
-		0.5f,0.5f,0.0f,		1.0f,1.0f,1.0f,		1.0f,1.0f,	// 右上
+	float vertices[] = { // 直接使用有重复顶点的定义方式
+		// 顶点位置				//uv坐标
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 	GLuint indices[] = { // 索引，指明顶点的绘制顺序
 		0,1,2,
@@ -83,13 +120,13 @@ int main()
 																			   // 现代 OpenGL 不提供默认的 顶点和片段着色器，所以需要自己撸一个
 
 
-	GLuint EBO;
+	/*GLuint EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
 	// 4.设定顶点属性
 	// 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)0);
 	// 注：
 	// index 可以配置多个顶点属性，我们这里配置到 0 位置。前面顶点着色器的 layout(location = 0) 就表示采用下标为0的顶点属性的定义
 	// size 顶点属性的大小，我们的顶点属性是 vec3 ,所以是 3
@@ -100,12 +137,9 @@ int main()
 
 	// 启用 0 号顶点属性
 	glEnableVertexAttribArray(0);
-	//设置用于颜色参数的顶点属性
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
 	//设置用于纹理参数的顶点属性
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 
 	// 设置好了就解除绑定
@@ -193,7 +227,7 @@ int main()
 
 		// 模型矩阵
 		mat4 model;
-		model = rotate(model, (float)radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+		model = rotate(model, (float)glfwGetTime(), vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, value_ptr(model));
 		// 观察矩阵
 		mat4 view;
@@ -204,9 +238,7 @@ int main()
 		proj = perspective((float)radians(45.0f), (float)800 / 600, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "proj"), 1, GL_FALSE, value_ptr(proj));
 
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
-		//glDrawArrays(GL_TRIANGLES, 0, 3); // 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
+		glDrawArrays(GL_TRIANGLES,0,36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
 
 
 
