@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 
+using namespace glm;
 class Shader
 {
 public:
@@ -90,6 +91,10 @@ public:
 	void setFloat(const std::string &name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+	}
+	void setMat4(const std::string &name, mat4 value)const
+	{
+		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value_ptr(value));
 	}
 
 private:

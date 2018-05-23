@@ -1,11 +1,12 @@
-#include <glad/glad.h> // <glad/glad.h> 要在 <GLFW/glfw3.h> 之前，有 GL/gl.h 等依赖关系。glad 库协助我们使用正确的驱动，管理 OpenGL 的函数指针。
-#include <GLFW/glfw3.h> // glfw 库是协助我们来创建窗口的
-#include <Shader/Shader.h>
-#include <iostream>
 // 数学库
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <glad/glad.h> // <glad/glad.h> 要在 <GLFW/glfw3.h> 之前，有 GL/gl.h 等依赖关系。glad 库协助我们使用正确的驱动，管理 OpenGL 的函数指针。
+#include <GLFW/glfw3.h> // glfw 库是协助我们来创建窗口的
+#include <Shader/Shader.h>
+#include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -102,7 +103,19 @@ int main()
 		0,1,2,
 		1,2,3,
 	};
-
+	// 定义10个世界坐标
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	// 1.绑定 VAO
 	GLuint VAO;
@@ -226,10 +239,6 @@ int main()
 		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
 
 
-		// 模型矩阵
-		mat4 model;
-		model = rotate(model, (float)glfwGetTime(), vec3(1.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, value_ptr(model));
 		// 观察矩阵
 		mat4 view;
 		view = translate(view, vec3(0.0f, 0.0f, -3.0f));
@@ -239,7 +248,18 @@ int main()
 		proj = perspective((float)radians(45.0f), (float)800 / 600, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "proj"), 1, GL_FALSE, value_ptr(proj));
 
-		glDrawArrays(GL_TRIANGLES,0,36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
+		// 做不同的变换绘制10次
+		for (size_t i = 0; i < 10; i++)
+		{
+			// 模型矩阵
+			mat4 model;
+			model = translate(model, cubePositions[i]);
+			model = rotate(model, (float)glfwGetTime()*radians((float)i*45+45), vec3(1.0f,i/2,0.0f));
+			
+			shader->setMat4("model",model);// 封装一下，简化写法
+			glDrawArrays(GL_TRIANGLES, 0, 36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
+			
+		}
 
 
 
