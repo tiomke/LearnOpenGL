@@ -199,6 +199,7 @@ int main()
 	glUniform1i(glGetUniformLocation(shader->ID, "ourTexture2"), 1); 
 	//shader->setInt("ourTexture2", 1);// 也可以直接辅助函数调用
 
+	glEnable(GL_DEPTH_TEST);// 开启深度测试，默认是关闭的。深度值存储在每个片段的 z 值中，开启后opengl通过一个深度缓存来判断当前片段是否在其他片段后面，如果是的话就会被裁掉
 	////// 渲染配置 End
 
 	// 添加主循环
@@ -210,8 +211,8 @@ int main()
 		// 渲染相关 Start
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // 设置用于清除的颜色值
 		glClear(GL_COLOR_BUFFER_BIT); // 清除颜色缓存
-
-
+		glClear(GL_DEPTH_BUFFER_BIT); // 清除深度测试缓存
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 也可以合并为一条
 		// 绑定纹理
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -227,7 +228,7 @@ int main()
 
 		// 模型矩阵
 		mat4 model;
-		model = rotate(model, (float)glfwGetTime(), vec3(1.0f, 0.0f, 0.0f));
+		model = rotate(model, (float)glfwGetTime(), vec3(1.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, value_ptr(model));
 		// 观察矩阵
 		mat4 view;
