@@ -26,7 +26,7 @@ int main()
 																   //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // OS X 上需要加上这句
 
 																   // 创建窗口对象
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL via tangyikejun", NULL, NULL); // 宽，高，标题
+	GLFWwindow* window = glfwCreateWindow(600, 600, "LearnOpenGL via tangyikejun", NULL, NULL); // 宽，高，标题
 	if (window == NULL)
 	{
 		cout << "Fail Create Window" << endl;
@@ -43,7 +43,7 @@ int main()
 	}
 
 	// 定义视口
-	glViewport(0, 0, 800, 600); // 坐标原点在左下角。视口可以比窗口小，那么可以在视口以外的区域绘制OpenGL之外的东西。
+	glViewport(0, 0, 600, 600); // 坐标原点在左下角。视口可以比窗口小，那么可以在视口以外的区域绘制OpenGL之外的东西。
 								// OpenGL 的坐标范围 [-1,1]
 
 
@@ -105,7 +105,7 @@ int main()
 	};
 	// 定义10个世界坐标
 	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(0.0f,  0.0f,  -0.5f),
 		glm::vec3(2.0f,  5.0f, -15.0f),
 		glm::vec3(-1.5f, -2.2f, -2.5f),
 		glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -241,11 +241,11 @@ int main()
 
 		// 观察矩阵
 		mat4 view;
-		view = translate(view, vec3(0.0f, 0.0f, -3.0f));
+		view = translate(view, vec3(0.0f, 0.0f, -0.5f));
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, GL_FALSE, value_ptr(view));
 		// 透视投影矩阵
 		mat4 proj;
-		proj = perspective((float)radians(45.0f), (float)800 / 600, 0.1f, 100.0f);
+		proj = perspective((float)radians(90.0f), (float)600 / 600, 0.1f, 100.0f);
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "proj"), 1, GL_FALSE, value_ptr(proj));
 
 		// 做不同的变换绘制10次
@@ -254,7 +254,7 @@ int main()
 			// 模型矩阵
 			mat4 model;
 			model = translate(model, cubePositions[i]);
-			model = rotate(model, (float)glfwGetTime()*radians((float)i*45+45), vec3(1.0f,i/2,0.0f));
+			//model = rotate(model, (float)glfwGetTime()*radians((float)i*45+45), vec3(1.0f,i/2,0.0f));
 			
 			shader->setMat4("model",model);// 封装一下，简化写法
 			glDrawArrays(GL_TRIANGLES, 0, 36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
