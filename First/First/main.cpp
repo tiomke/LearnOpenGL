@@ -58,7 +58,7 @@ int main()
 						 // 顶点			// 颜色		// 纹理
 		-0.5f,-0.5f,0.0f,	1.0f,0.0f,0.0f,		0.0f,0.0f,	// 左下
 		0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,		1.0f,0.0f,	// 右下
-		0.0f,0.5f,0.0f,		0.0f,0.0f,1.0f,		0.0f,1.0f,	// 左上
+		-0.5f,0.5f,0.0f,		0.0f,0.0f,1.0f,		0.0f,1.0f,	// 左上
 		0.5f,0.5f,0.0f,		1.0f,1.0f,1.0f,		1.0f,1.0f,	// 右上
 	};
 	GLuint indices[] = { // 索引，指明顶点的绘制顺序
@@ -190,11 +190,19 @@ int main()
 		//GLint pos = glGetUniformLocation(program, "ourColor");
 		//glUniform4f(pos, 0.5, sin(t)/3 + 0.5, 0.2, 1);
 
-		// 随时间旋转，
-		mat4 trans;
-		trans = translate(trans, vec3(0.5f, -0.5f, 0.0f)); // 
-		trans = rotate(trans, (float)glfwGetTime(), vec3(0.0f, 0.0f, 1.0f)); 
-		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "transform"), 1, GL_FALSE, value_ptr(trans)); // 参数二表示传入的矩阵个数，参数三表示是否要做矩阵置换
+
+		// 模型矩阵
+		mat4 model;
+		model = rotate(model, (float)radians(-55.0f), vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "model"), 1, GL_FALSE, value_ptr(model));
+		// 观察矩阵
+		mat4 view;
+		view = translate(view, vec3(0.0f, 0.0f, -3.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "view"), 1, GL_FALSE, value_ptr(view));
+		// 透视投影矩阵
+		mat4 proj;
+		proj = perspective((float)radians(45.0f), (float)800 / 600, 0.1f, 100.0f);
+		glUniformMatrix4fv(glGetUniformLocation(shader->ID, "proj"), 1, GL_FALSE, value_ptr(proj));
 
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 指定图元类型，指定顶点数量，指定参数类型，指定 EBO 偏移量
