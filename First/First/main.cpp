@@ -156,8 +156,9 @@ int main()
 	glEnable(GL_DEPTH_TEST);// 开启深度测试，默认是关闭的。深度值存储在每个片段的 z 值中，开启后opengl通过一个深度缓存来判断当前片段是否在其他片段后面，如果是的话就会被裁掉
 	////// 渲染配置 End
 
-	vec3 lightPos(1.2f, 1.0f, 2.0f);
+	vec3 lightPos(1.2f, 6.0f, 1.0f);
 	// 观察矩阵
+	vec3 viewPos(0.0f, 0.0f, 10.0f);
 	mat4 view;
 	view = translate(view, vec3(0.0f, 0.0f, -10.0f));
 	// 透视投影矩阵
@@ -170,9 +171,13 @@ int main()
 	model = scale(model, vec3(0.2f)); // 然后缩小
 
 	mat4 omodel;
-	//vec3 objPos(0,0,-10.0f);
-	//omodel = translate(omodel, objPos);
+	vec3 objPos(0,-0.5,5.0f);
+	omodel = translate(omodel, objPos);
 	omodel = rotate(omodel, (float)radians(45.0), vec3(1, 1, 0));
+	
+	// 法线矩阵
+	mat3 normalMatrix;
+	normalMatrix = mat3(transpose(inverse(omodel)));
 	
 	//shader->use();
 	//shader->setVec3("lightPos",lightPos);
@@ -204,6 +209,8 @@ int main()
 		shader->setMat4("proj", proj);
 		shader->setMat4("model", omodel);
 		shader->setVec3("lightPos", lightPos);
+		shader->setMat3("normalMatrix", normalMatrix);
+		shader->setVec3("viewPos", viewPos);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
 		// 渲染相关 End
