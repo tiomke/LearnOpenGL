@@ -57,47 +57,48 @@ int main()
 
 
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
+		// 顶点坐标				// 法向量（同一个点，在不同的片面中，有不同的法向量）
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-		-0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f, -0.5f,
-		0.5f, -0.5f,  0.5f,
-		0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-		-0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f, -0.5f,
-		0.5f,  0.5f,  0.5f,
-		0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
 
@@ -120,7 +121,7 @@ int main()
 
 	// 4.设定顶点属性
 	// 设定传入的顶点数据与着色器之前的对应关系，也就是定义 VBO 中数据的意义
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)0);
 	// 注：
 	// index 可以配置多个顶点属性，我们这里配置到 0 位置。前面顶点着色器的 layout(location = 0) 就表示采用下标为0的顶点属性的定义
 	// size 顶点属性的大小，我们的顶点属性是 vec3 ,所以是 3
@@ -130,13 +131,17 @@ int main()
 	// pointer 本例中表示位置数据相对于缓冲起始位置的偏移量
 
 	// 启用 0 号顶点属性
-	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(0);		
+
+	// 设定法向量
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 	GLuint LightVAO;
 	glGenVertexArrays(1,&LightVAO);
 	glBindVertexArray(LightVAO);
 	glBindBuffer(GL_ARRAY_BUFFER,VBO); // 这个 VBO 里面放的是一个立方体
-	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(void *)0);
+	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GLfloat),(void *)0);
 
 	glEnableVertexAttribArray(0);
 
@@ -151,6 +156,27 @@ int main()
 	glEnable(GL_DEPTH_TEST);// 开启深度测试，默认是关闭的。深度值存储在每个片段的 z 值中，开启后opengl通过一个深度缓存来判断当前片段是否在其他片段后面，如果是的话就会被裁掉
 	////// 渲染配置 End
 
+	vec3 lightPos(1.2f, 1.0f, 2.0f);
+	// 观察矩阵
+	mat4 view;
+	view = translate(view, vec3(0.0f, 0.0f, -10.0f));
+	// 透视投影矩阵
+	mat4 proj;
+	proj = perspective((float)radians(45.0f), (float)600 / 600, 0.1f, 100.0f);
+	// 模型矩阵
+	mat4 model;
+	model = mat4();
+	model = translate(model, lightPos); // 移动到 lightPos
+	model = scale(model, vec3(0.2f)); // 然后缩小
+
+	mat4 omodel;
+	//vec3 objPos(0,0,-10.0f);
+	//omodel = translate(omodel, objPos);
+	omodel = rotate(omodel, (float)radians(45.0), vec3(1, 1, 0));
+	
+	//shader->use();
+	//shader->setVec3("lightPos",lightPos);
+
 	// 添加主循环
 	while (!glfwWindowShouldClose(window))
 	{
@@ -161,21 +187,6 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // 设置用于清除的颜色值
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		vec3 lightPos(1.2f, 1.0f, 2.0f);
-		// 观察矩阵
-		mat4 view;
-		view = translate(view, vec3(0.0f, 0.0f, -10.0f));
-		// 透视投影矩阵
-		mat4 proj;
-		proj = perspective((float)radians(45.0f), (float)600 / 600, 0.1f, 100.0f);
-		// 模型矩阵
-		mat4 model;
-		model = mat4();
-		model = translate(model, lightPos); // 移动到 lightPos
-		model = scale(model, vec3(0.2f)); // 然后缩小
-
-		mat4 omodel;
-		omodel = rotate(omodel, (float)radians(45.0),vec3(1,1,0));
 
 		lightShader->use(); // 先执行shader
 		// 再设置到uniform
@@ -192,6 +203,7 @@ int main()
 		shader->setMat4("view", view);
 		shader->setMat4("proj", proj);
 		shader->setMat4("model", omodel);
+		shader->setVec3("lightPos", lightPos);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
 		// 渲染相关 End
