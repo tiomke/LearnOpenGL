@@ -17,7 +17,9 @@ void main()
 	vec3 norm = normalize(Normal);
 	vec3 lightDir = normalize(lightPos-FragPos);
 	float diff = max(dot(norm,lightDir),0);
+	diff = 0; // 临时把漫反射的贡献取消掉，方便看镜面反射
 	vec3 diffuse = diff * lightColor;
+	
 	// 镜面反射
 	float specularStrength = 1;//镜面强度
 	// 

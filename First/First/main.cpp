@@ -156,31 +156,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);// 开启深度测试，默认是关闭的。深度值存储在每个片段的 z 值中，开启后opengl通过一个深度缓存来判断当前片段是否在其他片段后面，如果是的话就会被裁掉
 	////// 渲染配置 End
 
-	vec3 lightPos(1.2f, 6.0f, 1.0f);
-	// 观察矩阵
-	vec3 viewPos(0.0f, 0.0f, 10.0f);
-	mat4 view;
-	view = translate(view, vec3(0.0f, 0.0f, -10.0f));
-	// 透视投影矩阵
-	mat4 proj;
-	proj = perspective((float)radians(45.0f), (float)600 / 600, 0.1f, 100.0f);
-	// 模型矩阵
-	mat4 model;
-	model = mat4();
-	model = translate(model, lightPos); // 移动到 lightPos
-	model = scale(model, vec3(0.2f)); // 然后缩小
 
-	mat4 omodel;
-	vec3 objPos(0,-0.5,5.0f);
-	omodel = translate(omodel, objPos);
-	omodel = rotate(omodel, (float)radians(45.0), vec3(1, 1, 0));
 	
-	// 法线矩阵
-	mat3 normalMatrix;
-	normalMatrix = mat3(transpose(inverse(omodel)));
-	
-	//shader->use();
-	//shader->setVec3("lightPos",lightPos);
 
 	// 添加主循环
 	while (!glfwWindowShouldClose(window))
@@ -189,9 +166,30 @@ int main()
 		processInput(window);
 
 		// 渲染相关 Start
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // 设置用于清除的颜色值
+		glClearColor(0.1f, 0.1f, 0.1f, 5.0f); // 设置用于清除的颜色值
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		float rad = radians(glfwGetTime()*30);
+		vec3 lightPos(0.0f, cos(rad)*6.0f,sin(rad)*6.0f);
+		// 观察矩阵
+		vec3 viewPos(0.0f, 0.0f, 10.0f);
+		mat4 view;
+		view = translate(view, vec3(0.0f, 0.0f, -10.0f));
+		// 透视投影矩阵
+		mat4 proj;
+		proj = perspective((float)radians(45.0f), (float)600 / 600, 0.1f, 100.0f);
+		// 模型矩阵
+		mat4 model;
+		model = mat4();
+		model = translate(model, lightPos); // 移动到 lightPos
+		model = scale(model, vec3(0.2f)); // 然后缩小
+
+		mat4 omodel;
+		omodel = rotate(omodel, (float)radians(glfwGetTime()*10), vec3(1, 0, 0)); // 立方体旋转
+
+		// 法线矩阵
+		mat3 normalMatrix;
+		normalMatrix = mat3(transpose(inverse(omodel)));
 
 		lightShader->use(); // 先执行shader
 		// 再设置到uniform
