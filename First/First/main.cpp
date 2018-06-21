@@ -209,6 +209,10 @@ int main()
 		shader->setVec3("lightPos", lightPos);
 		shader->setMat3("normalMatrix", normalMatrix);
 		shader->setVec3("viewPos", viewPos);
+		shader->setVec3("material.ambient", vec3(1,0.5,0.31));
+		shader->setVec3("material.diffuse", vec3(1, 0.5, 0.31));
+		shader->setVec3("material.specular", vec3(0.5, 0.5, 0.5));
+		shader->setFloat("material.shininess", 32);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);// 指定图元类型，指定顶点数组的起始索引和绘制的顶点数量
 		// 渲染相关 End
