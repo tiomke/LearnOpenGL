@@ -6,6 +6,7 @@
 #include <glad/glad.h> // <glad/glad.h> 要在 <GLFW/glfw3.h> 之前，有 GL/gl.h 等依赖关系。glad 库协助我们使用正确的驱动，管理 OpenGL 的函数指针。
 #include <GLFW/glfw3.h> // glfw 库是协助我们来创建窗口的
 #include <Shader/Shader.h>
+#include <LearnOpenGL/Camera.h>
 #include <iostream>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -15,6 +16,19 @@ using namespace std;
 using namespace glm;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow * window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+const unsigned int SCR_WIDTH = 600;
+const unsigned int SCR_HEIGHT = 600;
+
+Camera camera(vec3(0.0f,0.0f,3.0f));
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+bool firstMouse = true;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 int main()
 {
@@ -49,6 +63,8 @@ int main()
 
 								// 注册窗口 resize 的回调函数
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 对于视网膜屏，width 和 height 都会比原输入值高，这大概就是会模糊的原因？
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 
 	////// 渲染配置 Start
 	Shader* shader = new Shader("../First/Shader/vshader.glsl", "../First/Shader/fshader.glsl");
@@ -162,6 +178,11 @@ int main()
 	// 添加主循环
 	while (!glfwWindowShouldClose(window))
 	{
+		// 
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		// esc 退出
 		processInput(window);
 
@@ -169,15 +190,14 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 5.0f); // 设置用于清除的颜色值
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		float rad = radians(glfwGetTime()*30);
+		float rad = radians(glfwGetTime()*30.0f);
 		vec3 lightPos(0.0f, cos(rad)*6.0f,sin(rad)*6.0f);
 		// 观察矩阵
-		vec3 viewPos(0.0f, 0.0f, 10.0f);
-		mat4 view;
-		view = translate(view, vec3(0.0f, 0.0f, -10.0f));
+		vec3 viewPos = camera.Position;
+		mat4 view = camera.GetViewMatrix();
 		// 透视投影矩阵
 		mat4 proj;
-		proj = perspective((float)radians(45.0f), (float)600 / 600, 0.1f, 100.0f);
+		proj = perspective((float)radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		// 模型矩阵
 		mat4 model;
 		model = mat4();
@@ -185,7 +205,7 @@ int main()
 		model = scale(model, vec3(0.2f)); // 然后缩小
 
 		mat4 omodel;
-		omodel = rotate(omodel, (float)radians(glfwGetTime()*10), vec3(1, 0, 0)); // 立方体旋转
+		omodel = rotate(omodel, (float)radians(glfwGetTime()*10.0f), vec3(1, 0, 0)); // 立方体旋转
 
 		// 法线矩阵
 		mat3 normalMatrix;
@@ -239,4 +259,40 @@ void processInput(GLFWwindow * window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
 }

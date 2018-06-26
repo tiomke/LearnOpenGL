@@ -4,7 +4,6 @@ in vec3 FragPos;
 
 uniform vec3 objectColor; // 物体的颜色，相当于是对每个光分量的不吸收系数，不是眼睛看到的颜色
 uniform vec3 lightColor; // 灯的颜色，是眼睛看到的颜色
-uniform vec3 lightPos; // 光源位置
 uniform vec3 viewPos; // 观察者位置
 
 // 材质，材质通过设置冯氏光照模型的三个不同的分量+闪度来定义物体的视觉特性
@@ -17,6 +16,17 @@ struct Material
 };
 
 uniform Material material;
+
+uniform vec3 lightPos;
+// 光源特性
+//struct Light
+//{
+//	float position;
+//
+//	vec3 ambient;
+//	vec3 diffuse;
+//	vec3 specular;
+//};
 
 out vec4 fragColor;
 void main()
